@@ -16,16 +16,41 @@
   <link href="jquery.terminal-0.11.23.css" rel="stylesheet"/>
 
   <style type="text/css">
-  .terminal, .cmd {
-      background: white;
+
+@media (prefers-color-scheme: dark) {
+  .terminal, .cmd    { background:  #000; color: white; }
+  .terminal .inverted, .cmd .inverted, .cmd .cursor.blink {
+      background-color: white;
       color: #000;
   }
-  .terminal {
-    border: 1px solid #999;
-  }
+  body {
+        color: white;
+        background-color: black;
+    }
+    #messageBox {
+        color: white;
+        background-color: black;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+  .terminal, .cmd     { background: white; color:  #000; }
   .terminal .inverted, .cmd .inverted, .cmd .cursor.blink {
       background-color: #000;
       color: white;
+  }
+  body {
+        background-color: white;
+        color: black;
+    }
+  #messageBox {
+        background-color: white;
+        color: black;
+    }
+  }
+
+  .terminal {
+    border: 1px solid #999;
   }
   @-webkit-keyframes terminal-blink {
     0%, 100% {
