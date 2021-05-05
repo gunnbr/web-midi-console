@@ -108,7 +108,7 @@ onMIDIMessage: function(message) {
     var message = "";
     var channel = 0;
 
-    if (data.length > 1){
+    if (data.length > 0){
         channel = data[0] & 0x0F;
 
         switch (data[0] & 0xF0){
@@ -155,11 +155,13 @@ onMIDIMessage: function(message) {
                 break;
                 
             default:
-                message = `${data}`;
+                message = `Command ${(data[0] & 0xF0) >> 4}: ${data}`;
                 break;
         }
     }
-
+    else{
+        message = `Blank message`;
+    }
     var currentTime = new Date();
 
     msgConsole.value = msgConsole.value + "\n" + currentTime.getHours() + ":" + currentTime.getMinutes() + ":" + currentTime.getSeconds() + "." +
