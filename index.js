@@ -105,7 +105,69 @@ onMIDIMessage: function(message) {
     var port = message.target;
 	var data = message.data;
 	var msgConsole = document.getElementById("midiMessages").elements["console"];
-    msgConsole.value = port.name + ": " + data + "\n" + msgConsole.value;
+    var message = "";
+    var channel = 0;
+
+    if (data.length > 1){
+        channel = data[0] & 0x0F;
+
+        switch (data[0] & 0xF0){
+            case 0x80:
+                message = `Note #${data[1]} OFF Velocity ${data[2]}`;
+                break;
+            
+            case 0x90:
+                message = `Note #${data[1]}  ON Velocity ${data[2]}`;
+                break;
+
+            case 0xA0:
+                message = 'Poly key pressure...'
+                break;
+                
+            case 0xB0:
+                if (data[1] == 0x00){
+                    message=`Bank Select MSB: ${data[2]}`;
+                }
+                else if (data[1] == 0x20){
+                    message=`Bank Select LSB: ${data[2]}`;
+                } 
+                else{
+                    message = `CC #${data[1]} -> ${data[2]}`;
+                }
+                break;
+    
+            case 0xC0:
+                message = `Patch Change -> ${data[1]}`;
+                break;
+
+            case 0xD0:
+                message = `Channel pressure...`;
+                break;
+
+            case 0xE0:
+                // Decode 7 bits LSB at data[1], 7 bits MSB data[2]
+                var pb = data[2] | data[1] << 7;
+                message = `Pitch bend -> ${pb}`;
+                break;
+
+            case 0xF0:
+                message = 'System message';
+                break;
+                
+            default:
+                message = `${data}`;
+                break;
+        }
+    }
+
+    var currentTime = new Date();
+
+    msgConsole.value = msgConsole.value + "\n" + currentTime.getHours() + ":" + currentTime.getMinutes() + ":" + currentTime.getSeconds() + "." +
+        currentTime.getMilliseconds() + ` - ${port.name}(${channel}): ${message}`;
+    
+    // Now scroll to the bottom
+    var $textarea = $('#messageBox');
+    $textarea.scrollTop($textarea[0].scrollHeight);
 },
 
 initTerminal: function() {
